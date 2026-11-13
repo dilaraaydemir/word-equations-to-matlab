@@ -38,6 +38,7 @@ Scope: backstepping-type derivations, including adaptive backstepping with tunin
 
 - Claude Code
 - MATLAB with Symbolic Math Toolbox (tested on R2025b), connected to Claude Code through the MATLAB MCP server from MathWorks' MATLAB Agentic Toolkit
+- The `matlab-use-symbolic-math` skill from the MATLAB Agentic Toolkit (the skill tells Claude to use it for Symbolic Math Toolbox conventions)
 - pandoc, which reads the .docx
 - Simulink, only for the example Simulink test
 
