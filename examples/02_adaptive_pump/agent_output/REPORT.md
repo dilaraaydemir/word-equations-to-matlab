@@ -1,145 +1,147 @@
-# Rapor: D12_b_model.docx – Adaptive Backstepping
+# Report: D12_b_model.docx – Adaptive Backstepping
 
-## 1. Belge, kapsam, kararlar
-- Belge: `D12_b_model.docx` (kopyası `checks/source/`, pandoc çıktısı `checks/source/equations.md`).
-- Kapsam: "Adaptive Backstepping" bölümü (E17–E40), adımlar T1–T7 (`checks/inventory.md`).
-- Çıktı klasörü: `D12_b_model_2026-11-13_005946/`.
-- Kararlar:
+*Translated from the agent's Turkish report. The content is unchanged; only the file list in §8 reflects the copy in this repository.*
 
-| No | Karar |
+## 1. Document, scope, decisions
+- Document: `D12_b_model.docx` (= `../input_document.docx`; pandoc output in `checks/source/equations.md`).
+- Scope: the "Adaptive Backstepping" section (E17–E40), steps T1–T7 (`checks/inventory.md`).
+- Output folder: `D12_b_model_2026-11-13_005946/` (= `agent_output/` here).
+- Decisions:
+
+| No | Decision |
 |---|---|
-| S1 | Kapsam ve T1–T7 adımları onaylandı |
-| S2 | f1 = 2Qvad **+** (2/Rbf)ΔP kullanıldı (E17a_corr) |
-| S3 | V'de ½z3² kullanıldı (E27_corr) |
-| S4 | z2·z3 çapraz terimlerinde düzeltilmiş işaretler kullanıldı (E29_corr, E38_corr) |
-| S5 | Ana sonuç tuning-function yasası. Belgedeki yasanın V̇ artığı aşağıda veriliyor |
-| S6 | ω > 0, sgn(ω) = +1 alındı (dirac terimi oluşmuyor) |
-| S7 | Qvad ve ΔP ölçülen sinyaller, 2. türeve kadar biliniyor. f_i yalnızca zamana bağlı. Hedef regülasyon: x1 = ΔVh → 0 |
+| S1 | Scope and steps T1–T7 confirmed |
+| S2 | f1 = 2Qvad **+** (2/Rbf)ΔP used (E17a_corr) |
+| S3 | ½z3² used in V (E27_corr) |
+| S4 | Corrected signs used for the z2·z3 cross terms (E29_corr, E38_corr) |
+| S5 | The main result is the tuning-function law. The V̇ residual of the document's law is given below |
+| S6 | ω > 0, sgn(ω) = +1 (no dirac term) |
+| S7 | Qvad and ΔP are measured signals, known up to the 2nd derivative. f_i depend on time only. Goal: regulation x1 = ΔVh → 0 |
 | S8 | k1..k3, γ1, γ2, θ1, θ2 > 0; α_ω ≠ 0, K ≠ 0 |
-| S9 | Türetme ve simülasyon projeksiyonsuz yapıldı. Projeksiyon önerisi §7'de |
-| S10 | Çıktılar: `Vin_fun.m`, `th1h_dot_fun.m`, `th2h_dot_fun.m`. Sayısal değer yerine konmadı. Referans çözüm yok |
-| ek | Gerçek θ1, θ2 (J, L) son yasalarda yer almıyor; assert ile doğrulandı |
-| ek | Simülasyonda θ̂(0) = 0.5θ ve 1.5θ; belgedeki yasa ile tuning-function yasası karşılaştırıldı |
+| S9 | Derivation and simulation without projection. Projection is proposed in §7 |
+| S10 | Outputs: `Vin_fun.m`, `th1h_dot_fun.m`, `th2h_dot_fun.m`. No numeric values substituted. No reference solution |
+| extra | The true θ1, θ2 (J, L) do not appear in the final laws; checked with assert |
+| extra | Simulation with θ̂(0) = 0.5θ and 1.5θ; the document's law compared with the tuning-function law |
 
-## 2. Belgenin çözülmüş kısmındaki hatalar
-Kontrol betiği `checks/chk_document.m`, sonuçlar `checks/analysis_results.md` içinde. Belge ile karşılaştırma `checks/side_by_side.md`'de.
+## 2. Errors in the hand-solved part of the document
+Check script: `checks/chk_document.m`, results in `checks/analysis_results.md`. Comparison with the document: `checks/side_by_side.md`.
 
-| Denklem | Sorun | Düzeltilmiş hali | Sonucu |
+| Equation | Problem | Corrected form | Consequence |
 |---|---|---|---|
-| E17a | f1 = 2Qvad − (2/Rbf)ΔP. E4 ve E5'ten türetilen E14 ise **+** veriyor: f1 + g1ω − E14 = −4ΔP/Rbf | f1 = 2Qvad + (2/Rbf)ΔP | Son Vin'de ΔP, ΔṖ ve ΔP̈ terimlerinin işaretini değiştirir. Belgedeki f1 ile model ẋ1'i yanlış verir; ΔP ≈ 10⁴ Pa'da ẋ1 hatası 4ΔP/Rbf ≈ 1.8·10⁻⁵ m³/s (Qvad'ın ~%20'si) |
-| E27 | V'de ½z3³ var. V(z3 = −1) = −½ olduğu için V pozitif tanımlı değil | ½z3² | Belgenin kendi V̇ ifadesi (z3·ż3) zaten ½z3²'ye karşılık geliyor; bu yazım hatası |
-| E29 | z3 parantezinde −θ̂1g3z2, θ̃1 parantezinde +g3z2z3 var. Hesap: E28 − E29 = 2·g3·z2·z3·(θ̂1 − θ̃1) | z3[… **+**θ̂1g3z2 …], θ̃1(… **−**g3z2z3) | — |
-| E36 | Belgedeki z3 parantezini (E35) çözmüyor, artık −2g3θ̂1z2. Ancak düzeltilmiş parantezi çözüyor | değişiklik yok | E36 doğru; hata sadece E35'in yazımında |
-| E38 | θ̂̇1 = γ1(… **−** g3z2z3). Düzeltilmiş θ̃1 parantezine göre artık −2g3z2z3 | θ̂̇1 = γ1(… **+** g3z2z3) | V̇'ye ek artık −2K·z2·z3·θ̃1 ekler |
-| E38/E40 (S5) | φ̇3, ẋ2 = θ1(…) üzerinden bilinmeyen θ1'i içeriyor. Belge bu terimi hesaba katmıyor | Tuning function: θ̂̇1'e γ1·z3·(∂φ3/∂x2)·(f2 + g2x2 + g3x3) terimi eklenir | Belgedeki yasayla V̇ ≠ −Σk·(hata)²; artık terim §4.3'te |
-| E7 | Türev "i̇̇" olarak yazılmış | di/dt | sadece yazım |
-| E6, E7 / E15, E16 | E6 ve E7'de K_i, K_emf, J, L; E15 ve E16'da K, J_gp, L_gp kullanılmış | aynı K | sadece gösterim |
-| E30 | −k1x² | −k1x1² | sadece yazım |
-| E12 | τ1 birimi N, τ2 birimi N·s·m⁻¹ | N·m ve N·m·s/rad olmalı | türetmeyi etkilemez |
+| E17a | f1 = 2Qvad − (2/Rbf)ΔP. E14, derived from E4 and E5, gives **+**: f1 + g1ω − E14 = −4ΔP/Rbf | f1 = 2Qvad + (2/Rbf)ΔP | Flips the sign of the ΔP, ΔṖ and ΔP̈ terms in the final Vin. With the document's f1 the model gives a wrong ẋ1; at ΔP ≈ 10⁴ Pa the error in ẋ1 is 4ΔP/Rbf ≈ 1.8·10⁻⁵ m³/s (~20 % of Qvad) |
+| E27 | V contains ½z3³. V(z3 = −1) = −½, so V is not positive definite | ½z3² | The document's own V̇ (z3·ż3) already corresponds to ½z3²; a typo |
+| E29 | The z3 bracket has −θ̂1g3z2 and the θ̃1 bracket has +g3z2z3. Check: E28 − E29 = 2·g3·z2·z3·(θ̂1 − θ̃1) | z3[… **+**θ̂1g3z2 …], θ̃1(… **−**g3z2z3) | — |
+| E36 | Does not solve the document's z3 bracket (E35), residual −2g3θ̂1z2, but does solve the corrected bracket | no change | E36 is correct; the error is only in how E35 is written |
+| E38 | θ̂̇1 = γ1(… **−** g3z2z3). Against the corrected θ̃1 bracket the residual is −2g3z2z3 | θ̂̇1 = γ1(… **+** g3z2z3) | Adds an extra residual −2K·z2·z3·θ̃1 to V̇ |
+| E38/E40 (S5) | φ̇3 contains the unknown θ1 through ẋ2 = θ1(…). The document does not account for this term | Tuning function: add γ1·z3·(∂φ3/∂x2)·(f2 + g2x2 + g3x3) to θ̂̇1 | With the document's law V̇ ≠ −Σk·(error)²; the residual is in §4.3 |
+| E7 | Derivative written as "i̇̇" | di/dt | notation only |
+| E6, E7 / E15, E16 | E6 and E7 use K_i, K_emf, J, L; E15 and E16 use K, J_gp, L_gp | one K | notation only |
+| E30 | −k1x² | −k1x1² | notation only |
+| E12 | τ1 in N, τ2 in N·s·m⁻¹ | should be N·m and N·m·s/rad | does not affect the derivation |
 
-Doğru bulunanlar: E4, E14, E21b,c = E15, E16; E24, E25; E32; E34; E40 (E40 = −γ2·z3·(g4x2 + g5x3 + u)). Sistem strict-feedback formunda.
+Found correct: E4, E14, E21b,c = E15, E16; E24, E25; E32; E34; E40 (E40 = −γ2·z3·(g4x2 + g5x3 + u)). The system is in strict-feedback form.
 
-## 3. Adımlar ve doğrulama
-Türetme `deriv_adaptive.m`'de, doğrulamalar `checks/verify_adaptive.m`'de. Doğrulama, türetmeden bağımsız olarak düz semboller üzerinde zincir kuralıyla yapıldı.
+## 3. Steps and verification
+Derivation in `deriv_adaptive.m`, verification in `checks/verify_adaptive.m`. The verification is independent of the derivation: plain symbols and the chain rule.
 
-| Adım | Yapılan | Doğrulama |
+| Step | Done | Verification |
 |---|---|---|
-| T1 | V = ½x1² + ½z2² + ½z3² + θ̃1²/(2γ1) + θ̃2²/(2γ2) ve V̇ hesaplandı; θ = θ̂ − θ̃ | — |
-| T2 | V̇ = x1·TERM1 + z2·TERM2 + z3·TERM3 + θ̃1·TERM_θ1 + θ̃2·TERM_θ2. Katsayılar `diff` ile alındı | assert: yeniden düzenleme doğru; V̇, θ̃'ya göre lineer |
-| T3 | φ2, φ3 ve u, `isolate` ile bulundu | 1. ve 2. parantez koşulları = 0. u, E36'ya eşit |
-| T4 | TERM_θ1 = 0 ve TERM_θ2 = 0'dan θ̂̇1 ve θ̂̇2 bulundu. TERM_θ1, a32 = ∂φ3/∂x2 terimini içeriyor | θ̂̇1 = E38_corr + γ1·z3·a32·F (fark 0); θ̂̇2 = E40 (fark 0) |
-| T5 | φ̇2 hesaplandı (parametre içermiyor). φ̇3 kestirilmiş dinamik (θ̂1) ve tam θ̂̇1 yasasıyla hesaplandı | ikisi de zincir kuralıyla aynı sonucu veriyor (fark 0) |
-| T6 | u, θ̂̇1 ve θ̂̇2 yalnızca x1, x2, x3, θ̂1, θ̂2 cinsinden yazıldı. Her `diff`'ten önce yer tutucular çözüldü | assert: yer tutucu kalmadı; θ1, θ2, θ̃ yok |
-| T7 | f ve g yerine fiziksel ifadeler kondu (sgn ω = 1) | Vin_simp = fiziksel subs(Vin_abs) (fark 0) |
-| **Kapalı çevrim** | Gerçek dinamik ve gerçek θ ile V̇ hesaplandı | **V̇ − (−k1x1² − k2z2² − k3z3²) = 0**: soyut seviyede ve fiziksel seviyede (E15, E16, J, L ile) |
+| T1 | V = ½x1² + ½z2² + ½z3² + θ̃1²/(2γ1) + θ̃2²/(2γ2) and V̇; θ = θ̂ − θ̃ | — |
+| T2 | V̇ = x1·TERM1 + z2·TERM2 + z3·TERM3 + θ̃1·TERM_θ1 + θ̃2·TERM_θ2. Coefficients taken with `diff` | assert: rearrangement correct; V̇ linear in θ̃ |
+| T3 | φ2, φ3 and u found with `isolate` | bracket conditions 1 and 2 = 0. u equals E36 |
+| T4 | θ̂̇1 and θ̂̇2 from TERM_θ1 = 0 and TERM_θ2 = 0. TERM_θ1 contains the term a32 = ∂φ3/∂x2 | θ̂̇1 = E38_corr + γ1·z3·a32·F (difference 0); θ̂̇2 = E40 (difference 0) |
+| T5 | φ̇2 computed (no parameters). φ̇3 computed with the estimated dynamics (θ̂1) and the full θ̂̇1 law | both agree with the chain rule (difference 0) |
+| T6 | u, θ̂̇1 and θ̂̇2 written in x1, x2, x3, θ̂1, θ̂2 only. Placeholders resolved before every `diff` | assert: no placeholders left; no θ1, θ2, θ̃ |
+| T7 | Physical expressions substituted for f and g (sgn ω = 1) | Vin_simp = physical subs(Vin_abs) (difference 0) |
+| **Closed loop** | V̇ computed with the true dynamics and the true θ | **V̇ − (−k1x1² − k2z2² − k3z3²) = 0**, both at the abstract level and at the physical level (with E15, E16, J, L) |
 
-## 4. Son yasa
-### 4.1 Referanslar
+## 4. Final law
+### 4.1 References
 - W_ref = φ2 = (2Qvad + k1·DV + 2ΔP/Rbf)/(2α_ω)
 - i_ref = φ3 = [2α_ω·DV − k2·(W − W_ref) + (2Q̇vad + k1(2Qvad − 2α_ω W + 2ΔP/Rbf) + 2ΔṖ/Rbf)/(2α_ω) + θ̂1(τ1 + α_P ΔP + τ2 W)] / (K·θ̂1)
 - z2 = W_ref − W, z3 = i_ref − i, F = −τ1 − α_PΔP − τ2W + K·i (= J·ω̇)
 - a32 = ∂i_ref/∂W = −(k1 + k2 − τ2·θ̂1)/(K·θ̂1)
 
-### 4.2 Kontrol ve uyarlama yasaları (kısa okunur form; tam form .m dosyalarında)
+### 4.2 Control and adaptation laws (short readable form; full form in the .m files)
 - **Vin** = (φ̇3 + K·θ̂1·z2 + k3·z3)/θ̂2 + K·W + R_gp·i
-  - φ̇3 = ∂φ3/∂DV·ẋ1 + a32·θ̂1·F + ∂φ3/∂θ̂1·θ̂̇1 + ∂φ3/∂(Qvad, ΔP, Q̇vad, ΔṖ)·(türevleri)
-  - Bu kısa form, E36'nın x2 = φ2 − z2 ve x3 = φ3 − z3 ile yazılmış halidir. `verify_adaptive.m` içinde tam ifadeyle farkının 0 olduğu doğrulandı.
-- **θ̂̇1** = γ1·[ −z2·(f2 + g2φ2 − g2z2 + g3φ3 − g3z3) + z3·a32·F ]. Fiziksel olarak: f2 = −τ1 − α_PΔP, g2 = −τ2, g3 = K. Son terim tuning function.
+  - φ̇3 = ∂φ3/∂DV·ẋ1 + a32·θ̂1·F + ∂φ3/∂θ̂1·θ̂̇1 + ∂φ3/∂(Qvad, ΔP, Q̇vad, ΔṖ)·(their derivatives)
+  - This short form is E36 written with x2 = φ2 − z2 and x3 = φ3 − z3. `verify_adaptive.m` checks that its difference from the full expression is 0.
+- **θ̂̇1** = γ1·[ −z2·(f2 + g2φ2 − g2z2 + g3φ3 − g3z3) + z3·a32·F ]. Physically: f2 = −τ1 − α_PΔP, g2 = −τ2, g3 = K. The last term is the tuning function.
 - **θ̂̇2** = −γ2·z3·(−K·W − R_gp·i + Vin)
-- Yasalarda gerekli sinyaller: DV, W, i, θ̂1, θ̂2, Qvad, ΔP, Q̇vad, ΔṖ, **Q̈vad, ΔP̈**. Yani Qvad ve ΔP'nin ikinci türevleri gerekiyor.
-- Gerçek θ1 = 1/J ve θ2 = 1/L hiçbir yasada yok (assert).
+- Signals the laws need: DV, W, i, θ̂1, θ̂2, Qvad, ΔP, Q̇vad, ΔṖ, **Q̈vad, ΔP̈**. That is, the second derivatives of Qvad and ΔP are needed.
+- The true θ1 = 1/J and θ2 = 1/L appear in none of the laws (assert).
 
-### 4.3 Belgedeki yasada V̇ artığı (S5)
-`verify_adaptive.m` içinde sembolik olarak, fark 0 olacak şekilde doğrulandı:
-- E36 + E38_corr + E40 (tuning terimi yok):
+### 4.3 V̇ residual of the document's law (S5)
+Verified symbolically in `verify_adaptive.m` (difference 0):
+- E36 + E38_corr + E40 (no tuning term):
   V̇ = −k1x1² − k2z2² − k3z3² **− z3·a32·F·θ̃1**
   = … + z3·(k1 + k2 − τ2θ̂1)/(Kθ̂1)·(K·i − τ1 − α_PΔP − τ2W)·θ̃1
-- E38 belgede yazıldığı gibi kullanılırsa artığa ayrıca **−2K·z2·z3·θ̃1** eklenir.
-- Bu terimlerin işareti belirsiz; V̇ ≤ 0 garantisi yok.
+- If E38 is used as written in the document, **−2K·z2·z3·θ̃1** is added to the residual.
+- The sign of these terms is undetermined; V̇ ≤ 0 is not guaranteed.
 
-### 4.4 Tekillikler ve limitler (`checks/analysis_adaptive.m`)
-- Paydalar: Vin için K³·Rbf²·α_ω²·θ̂1⁴·θ̂2; θ̂̇1 için K²·Rbf·α_ω·θ̂1².
-- θ̂1 = 0, θ̂2 = 0, K = 0 ve α_ω = 0 noktaları **gerçek tekillik**. Hem adım adım hem sadeleştirilmiş ifadede bölme sıfıra çıkıyor; limit ±∞. Kaldırılabilir 0/0 bulunmadı.
-- K, α_ω ve Rbf fiziksel sabit ve pozitif olduğu için çalışmada sorun çıkarmazlar. Asıl risk θ̂1 → 0 ve θ̂2 → 0; bu yüzden projeksiyon gerekir (§7).
-- `simplify` ifadeleri kısaltmadı (Vin 1503 karakter). Sadeleştirilmiş ve sadeleştirilmemiş ifade 5 rastgele noktada karşılaştırıldı (`digits(50)`); bağıl fark 0.
-- Geçerlilik koşulları: ω > 0 (sgn = 1). Belgedeki modelde ω'nun işareti değişirse yasa yeniden türetilmeli.
+### 4.4 Singularities and limits (`checks/analysis_adaptive.m`)
+- Denominators: K³·Rbf²·α_ω²·θ̂1⁴·θ̂2 for Vin; K²·Rbf·α_ω·θ̂1² for θ̂̇1.
+- θ̂1 = 0, θ̂2 = 0, K = 0 and α_ω = 0 are **true singularities**. Both the step-by-step and the simplified expression divide by zero there; the limit is ±∞. No removable 0/0 was found.
+- K, α_ω and Rbf are positive physical constants and cause no problem in operation. The real risk is θ̂1 → 0 and θ̂2 → 0; hence projection is needed (§7).
+- `simplify` did not shorten the expressions (Vin 1503 characters). Simplified and unsimplified expressions compared at 5 random points (`digits(50)`); relative difference 0.
+- Validity condition: ω > 0 (sgn = 1). If the sign of ω changes in the model, the law must be derived again.
 
-### 4.5 Simülasyon (`checks/sim_adaptive.m`, `checks/sim_adaptive.png`)
-- Ayarlar:
-  - Projeksiyon yok. Çözücü ode15s: L/R = 3 ms, mekanik ve uyarlama dinamikleri çok daha yavaş, sistem sert. Süre 5 s.
-  - Kazançlar: k = (5, 20, 200), γ = (10⁴, 10³).
-  - Başlangıç: DV = 2 mL, W = 60 rad/s, i = 0.6 A.
-  - Sinyaller: Qvad = 83 + 20·sin(2πt) mL/s ve ΔP = 10.7 + 2·sin(2πt) kPa. Bu sinyaller belgede yok, test için seçildi.
-- İlk deneme k = (10, 50, 500), γ = (10⁶, 10⁵), W(0) = 50 rad/s ile yapıldı. Başlangıçta z3 ≈ 8 A ve Vin ≈ 10³ V oldu; θ̂2 bir milisaniyenin altında sıfıra indi ve çözüm durduruldu. Her iki yasada da aynı davranış görüldü. Bu çıktı `analysis_results.md`'de duruyor. Sonuç: projeksiyonsuz yasa, yüksek γ ve büyük başlangıç hatasıyla tekilliğe gidiyor.
+### 4.5 Simulation (`checks/sim_adaptive.m`, `checks/sim_adaptive.png`)
+- Settings:
+  - No projection. Solver ode15s: L/R = 3 ms while the mechanical and adaptation dynamics are much slower, so the system is stiff. Duration 5 s.
+  - Gains: k = (5, 20, 200), γ = (10⁴, 10³).
+  - Initial state: DV = 2 mL, W = 60 rad/s, i = 0.6 A.
+  - Signals: Qvad = 83 + 20·sin(2πt) mL/s and ΔP = 10.7 + 2·sin(2πt) kPa. These signals are not in the document; they were chosen for the test.
+- The first attempt used k = (10, 50, 500), γ = (10⁶, 10⁵), W(0) = 50 rad/s. At the start z3 ≈ 8 A and Vin ≈ 10³ V; θ̂2 fell to zero in under a millisecond and the solver stopped. Both laws behaved the same. This output is kept in `analysis_results.md`. Conclusion: without projection, the law reaches the singularity with high γ and a large initial error.
 
-| θ̂(0) | yasa | max\|DV\| (t>1 s) | max\|z2\| | max\|z3\| | max\|Vin\| | θ̂1/θ1 sonda | V̇ > 0 örnek oranı |
+| θ̂(0) | law | max\|DV\| (t>1 s) | max\|z2\| | max\|z3\| | max\|Vin\| | θ̂1/θ1 at end | share of samples with V̇ > 0 |
 |---|---|---|---|---|---|---|---|
-| 0.5θ | tuning function | 1.70e-7 m³ | 0.44 rad/s | 0.24 A | 5.44 V | 0.562 | 0 (teorik) |
-| 0.5θ | belge (E38_corr) | 1.68e-7 m³ | 0.44 rad/s | 0.24 A | 5.44 V | 0.568 | 0 (artık/hedef ≤ 0.23) |
-| 1.5θ | tuning function | 3.37e-8 m³ | 0.066 rad/s | 0.107 A | 5.45 V | 1.488 | 0 (teorik) |
-| 1.5θ | belge (E38_corr) | 3.37e-8 m³ | 0.066 rad/s | 0.107 A | 5.45 V | 1.487 | 0 (artık/hedef ≤ 0.16) |
+| 0.5θ | tuning function | 1.70e-7 m³ | 0.44 rad/s | 0.24 A | 5.44 V | 0.562 | 0 (theory) |
+| 0.5θ | document (E38_corr) | 1.68e-7 m³ | 0.44 rad/s | 0.24 A | 5.44 V | 0.568 | 0 (residual/target ≤ 0.23) |
+| 1.5θ | tuning function | 3.37e-8 m³ | 0.066 rad/s | 0.107 A | 5.45 V | 1.488 | 0 (theory) |
+| 1.5θ | document (E38_corr) | 3.37e-8 m³ | 0.066 rad/s | 0.107 A | 5.45 V | 1.487 | 0 (residual/target ≤ 0.16) |
 
-- Bu senaryoda iki yasa pratikte aynı davranıyor. Belgedeki yasanın artığı hedef V̇'nin en fazla %23'ü kadar ve V̇ hiçbir örnekte pozitif olmuyor. Fark teorik: V̇ ≤ 0 garantisi yalnızca tuning-function yasasında var. Artık, (k1 + k2)/(Kθ̂1), z3 ve θ̃1 ile büyür; daha yüksek kazançlarda veya daha büyük θ̂ hatasında önemli hale gelebilir.
-- θ̂, 5 s içinde gerçek değere yaklaşmıyor (θ̂2 neredeyse sabit). Kalıcı uyarım (persistent excitation) olmadan V̇ ≤ 0, θ̂ → θ anlamına gelmez. DV, z2 ve z3'ün sıfıra yakınsaması da yavaş: kalan salınım 1 Hz'lik sinyalden geliyor ve θ̃ ile bağlantılı.
-- Vin en fazla 5.5 V. Bu senaryoda doyma (saturation) riski görünmüyor; ancak büyük başlangıç hatalarında Vin kilovolt mertebesine çıkabiliyor (ilk deneme).
+- In this scenario the two laws behave practically the same. The residual of the document's law is at most 23 % of the target V̇, and V̇ is positive in no sample. The difference is theoretical: only the tuning-function law guarantees V̇ ≤ 0. The residual grows with (k1 + k2)/(Kθ̂1), z3 and θ̃1; it can matter at higher gains or larger θ̂ errors.
+- θ̂ does not approach the true value within 5 s (θ̂2 almost constant). Without persistent excitation, V̇ ≤ 0 does not imply θ̂ → θ. DV, z2 and z3 also converge slowly: the remaining oscillation comes from the 1 Hz signal and is linked to θ̃.
+- Vin stays below 5.5 V. No saturation risk in this scenario; with large initial errors Vin can reach the kilovolt range (first attempt).
 
-## 5. Kod seçimleri
-- `x2_new`, `x3_new`: x2(t) ve x3(t) zamana bağlılığını korusun diye ayrı isimler kullanıldı.
-- Katsayılar `diff` ile alındı (z2'ye bölme yok, 0/0 yok). Yeniden düzenleme assert ile doğrulandı. θ̃ katsayıları da `diff` ile alındı ve V̇'nin θ̃'ya göre lineer olduğu assert ile kontrol edildi.
-- `z3_dot` içinde gerçek φ̇3 = kestirilmiş φ̇3 + a32·(ẋ2 − ẋ2_h) olarak yazıldı. a32 bir yer tutucu; tuning-function terimi bu satırdan doğuyor (S5).
-- `x2_dot_h`: φ̇3, kontrolörün hesaplayabileceği kestirilmiş dinamikle (θ̂1) türetildi.
-- Her `diff`'ten önce `for ii = 1:5` döngüsüyle açık listelerle `subs` yapıldı ve ardından assert kondu.
-- φ̇3 hesabında diff(θ̂1(t)) yerine tam θ̂̇1 yasası (tuning terimi dahil) kondu.
-- Assert'ler: gerçek θ ve θ̃ yasalarda yok; son ifadelerde yalnızca izin verilen semboller var; φ̇3'te çözülmemiş `diff` kalmadı.
-- `th2h_dot_fun`, Vin'i giriş olarak alan kısa form (E40). Tam ifadeyle farkının 0 olduğu assert ile doğrulandı.
+## 5. Code choices
+- `x2_new`, `x3_new`: separate names so that x2(t) and x3(t) keep their time dependence.
+- Coefficients taken with `diff` (no division by z2, no 0/0). The rearrangement is checked with assert. The θ̃ coefficients are also taken with `diff`, and V̇ being linear in θ̃ is checked with assert.
+- In `z3_dot`, the true φ̇3 is written as estimated φ̇3 + a32·(ẋ2 − ẋ2_h). a32 is a placeholder; the tuning-function term comes from this line (S5).
+- `x2_dot_h`: φ̇3 is derived with the estimated dynamics (θ̂1) that the controller can compute.
+- Before every `diff`, `subs` with explicit lists in a `for ii = 1:5` loop, followed by an assert.
+- In φ̇3, the full θ̂̇1 law (including the tuning term) replaces diff(θ̂1(t)).
+- Asserts: true θ and θ̃ absent from the laws; only allowed symbols in the final expressions; no unresolved `diff` in φ̇3.
+- `th2h_dot_fun` is the short form (E40) that takes Vin as an input. Its difference from the full expression is checked to be 0 with assert.
 
-## 6. Referans karşılaştırması
-Referans çözüm verilmedi.
+## 6. Reference comparison
+No reference solution was given.
 
-## 7. Dış sorular (yazar için)
-1. **Projeksiyon:** θ̂1 ve θ̂2'ye bölündüğü için (Vin'de θ̂1⁻⁴ ve θ̂2⁻¹) önerilen kural: θ̂̇i = 0, eğer θ̂i ≤ θi,min ve τi < 0 ise; değilse τi (τi: türetilen yasa). Bu kural V̇ ≤ −Σk·(hata)² özelliğini korur. J ve L için hangi alt/üst sınırlar kullanılacak (θ1,min = 1/J_max, θ2,min = 1/L_max)?
-2. E17a'daki f1 işareti: Qgp = α_ωω − ΔP/Rbf (E5) doğruysa f1 = 2Qvad + 2ΔP/Rbf olur. E5'teki işaret mi yoksa E17a mı doğru?
-3. Regülasyon hedefi x1 = ΔVh → 0 fiziksel olarak isteniyor mu, yoksa bir ΔVh,ref izlenmeli mi? İzleme istenirse ΔVh,ref'in 3. türevine kadar türevleri yasaya girer.
-4. Q̈vad ve ΔP̈ ölçülerek mi, kestirici/filtre ile mi elde edilecek? Gürültüye duyarlılık açısından önemli.
-5. Kazançlar ve γ için hedef değerler nedir? Simülasyondaki değerler yalnızca test amaçlı.
-6. τ1 ve τ2 birimleri (E12): N·m ve N·m·s/rad mı olmalı?
+## 7. Questions for the author
+1. **Projection:** since the law divides by θ̂1 and θ̂2 (θ̂1⁻⁴ and θ̂2⁻¹ in Vin), the proposed rule is: θ̂̇i = 0 if θ̂i ≤ θi,min and τi < 0; otherwise τi (τi: the derived law). This rule keeps V̇ ≤ −Σk·(error)². Which lower/upper bounds should be used for J and L (θ1,min = 1/J_max, θ2,min = 1/L_max)?
+2. Sign of f1 in E17a: if Qgp = α_ωω − ΔP/Rbf (E5) is correct, then f1 = 2Qvad + 2ΔP/Rbf. Is the sign in E5 or in E17a correct?
+3. Is regulation x1 = ΔVh → 0 physically what is wanted, or should a ΔVh,ref be tracked? With tracking, derivatives of ΔVh,ref up to the 3rd enter the law.
+4. Will Q̈vad and ΔP̈ be measured, or obtained with an estimator/filter? This matters for noise sensitivity.
+5. What are the target values for the gains and γ? The simulation values are for testing only.
+6. Units of τ1 and τ2 (E12): should they be N·m and N·m·s/rad?
 
-## 8. Dosyalar
-| Dosya | İçerik |
+## 8. Files
+| File | Content |
 |---|---|
-| README.md | dosya rehberi |
-| REPORT.md | bu rapor |
-| deriv_adaptive.m | türetme (yazarın kod stili) |
-| Vin_fun.m | Simulink için Vin |
-| th1h_dot_fun.m | Simulink için θ̂̇1 (tuning function dahil) |
-| th2h_dot_fun.m | Simulink için θ̂̇2 (Vin girişli) |
-| results.mat | soyut ve fiziksel, sadeleştirilmiş ve sadeleştirilmemiş tüm türetilen büyüklükler |
-| checks/source/ | Word kopyası, equations.md |
-| checks/inventory.md | bölümler, E/T numaraları, sembol tablosu, S kararları |
-| checks/side_by_side.md | belge ve MATLAB kontrolü yan yana |
-| checks/chk_document.m | çözülmüş kısmın kontrolleri |
-| checks/verify_adaptive.m | kapalı çevrim kontrolleri, belge yasası artığı; doc_law.mat'ı yazar |
-| checks/analysis_adaptive.m | sadeleştirme, paydalar, tekillikler |
-| checks/sim_adaptive.m | simülasyon; sim_adaptive.png ve sim_results.mat'ı yazar |
-| checks/log_run.m | betik çıktısını analysis_results.md'ye ekleyen yardımcı |
-| checks/analysis_results.md | tüm kontrol çıktıları (zaman damgalı, silinmeden) |
+| README.md | file guide |
+| REPORT.md | this report |
+| deriv_adaptive.m | derivation (author's code style) |
+| Vin_fun.m | Vin for Simulink |
+| th1h_dot_fun.m | θ̂̇1 for Simulink (with tuning function) |
+| th2h_dot_fun.m | θ̂̇2 for Simulink (takes Vin as input) |
+| results.mat | all derived quantities: abstract and physical, simplified and unsimplified |
+| checks/source/equations.md | pandoc output of the input document |
+| checks/inventory.md | sections, E/T numbers, symbol table, S decisions |
+| checks/side_by_side.md | document and MATLAB check side by side |
+| checks/chk_document.m | checks of the hand-solved part |
+| checks/verify_adaptive.m | closed-loop checks, residual of the document's law; writes doc_law.mat |
+| checks/analysis_adaptive.m | simplification, denominators, singularities |
+| checks/sim_adaptive.m | simulation; writes sim_adaptive.png and sim_results.mat |
+| checks/log_run.m | helper that appends script output to analysis_results.md |
+| checks/analysis_results.md | all check outputs (timestamped, never deleted) |

@@ -5,7 +5,7 @@
 - Output folder: `Deneme_14_model_2026-11-12_233140/`. The earlier folder `..._231529` was not opened.
 - The document contains the model (E1–E16) and the strict-feedback form (E17–E19). **There is no list of
   remaining steps**; the standard lab recipe T1–T8 was proposed and accepted (S2).
-- Decisions (user: "önerilerin hepsi tamam"): regulation ΔV → 0 with z1 = x1; z2 = φ2 − x2, z3 = φ3 − x3;
+- Decisions (user: "önerilerin hepsi tamam", i.e. all recommendations accepted): regulation ΔV → 0 with z1 = x1; z2 = φ2 − x2, z3 = φ3 − x3;
   V = ½x1² + ½z2² + ½z3²; target V̇ = −k1x1² − k2z2² − k3z3², k_i > 0; ω > 0 so sgn(ω) = +1;
   Q_vad and ΔP are exogenous signals; K_i = K_emf = K, J = J_gp, L = L_gp, ΔV = ΔV_h, u = v_in;
   all constants positive; no numeric values in the law. Details in `inventory.md`.

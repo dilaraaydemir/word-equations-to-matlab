@@ -45,6 +45,10 @@ Trials 8, 12 and 13 were each run twice more in separate sessions. All 6 runs we
 
 Only the form differed between runs: file names, input order, and the length of the generated expression. Check a function's input order before wiring it into Simulink.
 
+## Clean install
+
+The skill was downloaded from this repository and installed as described in the README, under a different Claude account, with all earlier copies of the skill removed. Run on `examples/01_backstepping_pump/input_document.docx`, it produced a `Vin_fun.m` identical to the one in the example: the difference at 5 random points was ≤ 8e-16, and both give v_in = 9.94 V at a physical operating point. Because the example matches the author's reference solution, the fresh run does too.
+
 ## What changed after testing
 
 Rules added to the skill from the trials:
