@@ -32,7 +32,7 @@ u    = u_fun(x1, x2, x3, th1h, th2h, th3h, k1, k2, k3, g1, g2, g3)   % 418-term 
 check: V̇ + k1x1² + k2z2² + k3z3² = 0  (symbolic, along the true dynamics)
 ```
 
-Scope: backstepping-type derivations, including adaptive backstepping with tuning functions. The skill was developed and tested at the control systems workstation of the Physiological Control Laboratory (Yıldız Technical University).
+Scope: backstepping-type derivations, including adaptive backstepping with tuning functions.
 
 ## Requirements
 
